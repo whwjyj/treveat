@@ -13,20 +13,18 @@ Future<List<model_user>> Userinfo(String token_key) async {
 
   if (response.statusCode == 200) {
     var responseBody = utf8.decode(response.bodyBytes);
-    final json = "${responseBody}"; //responseBody는 {키:값},{키:값}형태
+    final json = "${responseBody}";
     print(json);
     List list = await (jsonDecode(json) as List<dynamic>);
     return list.map<model_user>((map) => model_user.fromJson(map)).toList();
 
   }
   else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
     throw Exception('Not Found');
   }
 }
 
-//서버 Post
+//신규유저 정보 Post
 Future<String> call(String name, String token_key, String infotext, String profileimg, String allergy,
     String tour, String email) async {
   Map<String, String> headers = { "Accesstoken": "access_token"};
@@ -48,7 +46,7 @@ Future<String> call(String name, String token_key, String infotext, String profi
 
   final responsebody = await response.stream.bytesToString(); //response -> string으로 변환
 
-  print(responsebody); //값 제대로 전송되는지 체크용
+  print(responsebody);
 
   if (response.statusCode == 200) {
     return '작성이 완료되었습니다.';
@@ -62,7 +60,7 @@ class KakaoLogin implements SocialLogin {
   @override
   Future login(BuildContext context) async {
     try {
-      bool isInstalled = await isKakaoTalkInstalled();
+      bool isInstalled = await isKakaoTalkInstalled(); // 카톡 설치 여부
       OAuthToken token = isInstalled
           ? await UserApi.instance.loginWithKakaoTalk()
           : await UserApi.instance.loginWithKakaoAccount();
@@ -117,11 +115,10 @@ class KakaoLogin implements SocialLogin {
           }
 
           Navigator.pushNamed(context, '/first_token');
-          // return true;
+
         }
         catch(error) {
           print(error);
-          // return false;
         }
       }
       else {
@@ -144,7 +141,6 @@ class KakaoLogin implements SocialLogin {
 
           var getNo = await Userinfo(user.id.toString());
 
-          //회원가입
           if(getNo[0].token_key == '') {
             info.token_key = user.id.toString();
             info.name = user.kakaoAccount!.profile!.nickname!;
@@ -159,7 +155,6 @@ class KakaoLogin implements SocialLogin {
 
             await call(name, token_key, '', profileimg, '', '', email);
           }
-          //로그인
           else {
             info.no = getNo[0].no.toString();
             info.token_key = getNo[0].token_key;
@@ -197,7 +192,6 @@ class KakaoLogin implements SocialLogin {
       Navigator.pushNamed(context, '/first');
     }
     catch(error) {
-      // return false;
     }
   }
 }

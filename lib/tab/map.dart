@@ -8,10 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 import 'package:xml2json/xml2json.dart';
 
-Xml2Json xml2json = new Xml2Json();  //Make an instance.
+Xml2Json xml2json = new Xml2Json();
 XmlDocument? XmlData;
 
-void main() => runApp(MaterialApp(home: MapScreen()));
+void main() => runApp(MaterialApp(home: MapScreen())); //MapScreen 페이지를 실행시킴
 
 class MapScreen extends StatefulWidget {
   @override
@@ -28,24 +28,20 @@ class _MapWithMarkersState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    // API에서 데이터 가져오고 마커 생성
-    loadMarkers();
+    loadMarkers(); // 앱 시작시 마커 불러오기
   }
 
   Future<void> loadMarkers() async {
-    // API 호출
     final apiKey = 'PmBLn80WCCllUdLedclwIysnCuD4s7oow6pTP9EwnLbhMU7Ow2K354qef62KFaLX';
     final apiUrl1 = 'https://busan-7beach.openapi.redtable.global/api/rstr?serviceKey=$apiKey';
     final apiUrl2 = 'https://apis.data.go.kr/B551011/ForFriTourService/locationBasedList?serviceKey=IxreiIb7cGDnUhnmDbaWO6LyNur8uwjXM470XpZzGhnXhdMA3ui%2FNKZp9IQvPFWFgWeDZ6JBCC15R3UJCMOU2Q%3D%3D&MobileOS=AND&MobileApp=test&mapX=129.0756&mapY=35.1796&radius=100000';
 
-    // 두 API를 병렬로 요청
     final responses = await Future.wait([
       http.get(Uri.parse(apiUrl1)),
       http.get(Uri.parse(apiUrl2)),
-    ]);
+    ]); // API 병렬 처리함
 
     if (responses[0].statusCode == 200 && responses[1].statusCode == 200) {
-      // 첫 번째 API 응답 처리 (Redtable)
       final jsonData1 = json.decode(responses[0].body);
       for (var restaurant in jsonData1['body']) {
         double lat = double.parse(restaurant['RSTR_LA']);
@@ -62,9 +58,8 @@ class _MapWithMarkersState extends State<MapScreen> {
         );
 
         _markers.add(marker);
-      }
+      } // josn 처리
 
-      // 두 번째 API 응답 처리 (Tour)
       final responsebody = utf8.decode(responses[1].bodyBytes);
       xml2json.parse(responsebody);
       var jsondata = xml2json.toParker();
@@ -85,12 +80,11 @@ class _MapWithMarkersState extends State<MapScreen> {
         );
 
         _markers.add(marker);
-      }
+      } // xml 처리
 
-      // 모든 마커를 로드한 후, _filteredMarkers를 초기화합니다.
-      _filteredMarkers = List.from(_markers);
+      _filteredMarkers = List.from(_markers); // 필터링
 
-      setState(() {});
+      setState(() {}); // 마커 리스트가 갱신되면 업데이트
     } else {
       throw Exception('Failed to load markers from API');
     }
@@ -100,7 +94,6 @@ class _MapWithMarkersState extends State<MapScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
-          // 해당 마커 정보를 표시하는 페이지를 반환합니다.
           return MarkerInfoPage(marker: marker);
         },
       ),
@@ -111,21 +104,17 @@ class _MapWithMarkersState extends State<MapScreen> {
     String searchKeyword = _searchController.text;
     String englishSearchKeyword = Intl.message(searchKeyword, name: 'searchKeyword');
 
-    // 기존 마커 목록을 _filteredMarkers로 복사합니다.
     _filteredMarkers = List.from(_markers);
 
-    // 검색어로 필터링된 마커 목록을 생성
     List<MyMarker> filteredMarkers = _filteredMarkers
         .where((marker) => marker.name.toLowerCase().contains(englishSearchKeyword.toLowerCase()))
         .toList();
 
-    // 기존 마커 목록을 모두 비우고 검색 결과로 업데이트
     setState(() {
       _filteredMarkers.clear();
       _filteredMarkers.addAll(filteredMarkers);
-    });
+    }); // 필터링된 마커들만 화면에 보여줌
 
-    // 검색한 위치로 지도 이동
     if (filteredMarkers.isNotEmpty && _mapController != null) {
       _mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(
@@ -145,7 +134,7 @@ class _MapWithMarkersState extends State<MapScreen> {
         ),
       );
     }
-  }
+  } // 버튼 누르면 부산 중심으로 이동
 
   @override
   Widget build(BuildContext context) {
@@ -181,8 +170,7 @@ class _MapWithMarkersState extends State<MapScreen> {
                   snippet: marker.snippet,
                 ),
                 onTap: () {
-                  // 마커를 탭했을 때 정보 페이지를 표시
-                  showMarkerInfo(marker);
+                  showMarkerInfo(marker); // 마커를 탭했을 때 정보 페이지를 표시
                 },
               ),
             )
@@ -217,7 +205,7 @@ class _MapWithMarkersState extends State<MapScreen> {
               ),
             ),
           ),
-          Align(
+          Align( // 부산 버튼
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: EdgeInsets.all(16.0),
@@ -261,16 +249,16 @@ class MyMarker {
   final String name;
   final LatLng position;
   final String snippet;
-  String rstrId; // 수정: 더 이상 null로 초기화하지 않음
+  String rstrId;
 
   MyMarker({
     required this.id,
     required this.name,
     required this.position,
     required this.snippet,
-    required this.rstrId, // 수정: 생성자에서 rstrId를 받도록 변경
+    required this.rstrId,
   });
-}
+} // 커스텀을 위한 마커 클래스
 
 class MarkerInfoPage extends StatelessWidget {
   final MyMarker marker;
@@ -296,12 +284,12 @@ class MarkerInfoPage extends StatelessWidget {
           return rstrId;
         }
       }
-    }
+    } // 해당 식당 ID를 가져오는 함수
 
-    return null; // 오류 시 null 반환
+    return null;
   }
 
-  @override
+  @override // 마커 상세 정보 보여주는 페이지
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

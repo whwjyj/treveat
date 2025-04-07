@@ -13,15 +13,13 @@ Future<List<model_user>> Userinfo(String token_key) async {
 
   if (response.statusCode == 200) {
     var responseBody = utf8.decode(response.bodyBytes);
-    final json = "${responseBody}"; //responseBody는 {키:값},{키:값}형태
+    final json = "${responseBody}";
     print(json);
     List list = await (jsonDecode(json) as List<dynamic>);
     return list.map<model_user>((map) => model_user.fromJson(map)).toList();
 
   }
   else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
     throw Exception('Not Found');
   }
 }

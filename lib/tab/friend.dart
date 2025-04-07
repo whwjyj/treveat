@@ -12,8 +12,6 @@ import 'package:flutter_app/model/model_friend.dart';
 Future<List<model_friend>> fetchFriend(List keyword) async {
   final response;
 
-    // response = await http.get(Uri.parse(
-    //     'http://dongseok1.dothome.co.kr/treveat/mUsers/selectValue.php?randomcount=5&allergy=$keyword'));
   if(keyword.length==1)
     response = await http.get(Uri.parse(
         'http://dongseok1.dothome.co.kr/treveat/mUsers/selectValue.php?randomcount=5&allergy=${keyword[0]}'));
@@ -25,14 +23,12 @@ Future<List<model_friend>> fetchFriend(List keyword) async {
 
   if (response.statusCode == 200) {
     var responseBody = utf8.decode(response.bodyBytes);
-    final json = "${responseBody}"; //responseBody는 {키:값},{키:값}형태
+    final json = "${responseBody}";
     List list = (jsonDecode(json) as List<dynamic>);
     return list.map<model_friend>((map) => model_friend.fromJson(map)).toList();
 
-    //return Post.fromJson(jsonDecode(response.body));
+
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
     throw Exception('Not Found');
   }
 }
@@ -40,7 +36,7 @@ Future<List<model_friend>> fetchFriend(List keyword) async {
 Future<void> call_Allergy(String keyword) async {
   Map<String, String> headers = { "Accesstoken": "access_token"};
 
-  var url = Uri.parse('http://dongseok1.dothome.co.kr/treveat/insertPage.php'); //지정된 url로 알러지 키워드들 Post
+  var url = Uri.parse('http://dongseok1.dothome.co.kr/treveat/insertPage.php');
 
   http.MultipartRequest request = new http.MultipartRequest("POST", url);
   request.headers.addAll(headers);
@@ -51,18 +47,13 @@ Future<void> call_Allergy(String keyword) async {
 Future<void> call_Tour(String keyword) async {
   Map<String, String> headers = { "Accesstoken": "access_token"};
 
-  var url = Uri.parse('http://dongseok1.dothome.co.kr/treveat/insertPage.php'); //지정된 url로 알러지 키워드들 Post
+  var url = Uri.parse('http://dongseok1.dothome.co.kr/treveat/insertPage.php');
 
   http.MultipartRequest request = new http.MultipartRequest("POST", url);
   request.headers.addAll(headers);
 
   request.fields['keyword'] = keyword;
 
-  // var response = await request.send();
-  //
-  // final responsebody = await response.stream.bytesToString(); //response -> string으로 변환
-  //
-  // print(responsebody); //값 제대로 전송되는지 체크용
 }
 
 class Friend extends StatefulWidget {
@@ -151,7 +142,7 @@ class _Friend extends State<Friend> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      search_friend(searchController.text)));//위랑 세트 같이 생각해보기
+                                      search_friend(searchController.text)));
                         },
                       ),
                     )),
@@ -209,13 +200,13 @@ class _Friend extends State<Friend> {
                                                           color: Colors.black,fontSize: 12 )),
                                                     ),
                                                     onPressed: () {
-                                                      call_Allergy(Allergy[i]);//알러지 키워드 Post
+                                                      call_Allergy(Allergy[i]);
                                                       Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (context) =>
                                                                 allergy_friend(
-                                                                    Allergy[i])), //알러지 키워드 전달
+                                                                    Allergy[i])),
 
                                                       );
                                                     },
