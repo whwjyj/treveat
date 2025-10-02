@@ -1,5 +1,3 @@
-<img width="1419" height="775" alt="스크린샷 2025-10-02 오전 10 56 04" src="https://github.com/user-attachments/assets/eee9b28c-1d02-4f70-b500-e439f3f71167" /># treveat
-
 # 기술 스택
 ✓Frontend
 
@@ -69,3 +67,4 @@
   <summary>향우 및 기대효과</summary>
   <img width="1383" height="621" alt="스크린샷 2025-10-02 오전 11 01 27" src="https://github.com/user-attachments/assets/2d6156fd-5b39-4b4f-a78c-1777ab7486fc" />
 </details>
+
